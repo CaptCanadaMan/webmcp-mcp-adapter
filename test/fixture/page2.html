@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Second fixture</title></head>
+<body>
+<script>
+  document.modelContext.registerTool({
+    name: "other_tool",
+    description: "Only exists on page two.",
+    inputSchema: { type: "object", properties: {} },
+    execute() { return { page: 2 }; },
+  });
+</script>
+</body>
+</html>

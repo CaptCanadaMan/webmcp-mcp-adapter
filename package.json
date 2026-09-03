@@ -1,0 +1,35 @@
+{
+  "name": "webmcp-mcp-adapter",
+  "version": "0.1.0",
+  "description": "MCP server that exposes a web page's WebMCP tools (document.modelContext / navigator.modelContext) to any MCP client through a Playwright-driven Chromium.",
+  "type": "module",
+  "license": "MIT",
+  "bin": {
+    "webmcp-mcp": "bin/webmcp-mcp.js"
+  },
+  "files": [
+    "bin",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node bin/webmcp-mcp.js",
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "keywords": [
+    "webmcp",
+    "mcp",
+    "model-context-protocol",
+    "modelContext",
+    "playwright",
+    "browser-agent"
+  ],
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.30.0",
+    "playwright": "^1.62.1"
+  }
+}

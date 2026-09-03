@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>WebMCP fixture</title></head>
+<body>
+<h1>WebMCP fixture page</h1>
+<script>
+  // Spec dialect: document.modelContext.registerTool(tool, { signal }).
+  const ctx = document.modelContext;
+  window.fixtureReady = (async () => {
+    await ctx.registerTool({
+      name: "echo",
+      description: "Echo the text back.",
+      inputSchema: { type: "object", properties: { text: { type: "string" } }, required: ["text"] },
+      annotations: { readOnlyHint: true },
+      execute({ text }) {
+        return { echoed: text, at: 1 };
+      },
+    });
+    await ctx.registerTool({
+      name: "content_tool",
+      description: "Returns an MCP-shaped content array.",
+      inputSchema: { type: "object", properties: {} },
+      execute() {
+        return { content: [{ type: "text", text: "from content_tool" }], structuredContent: { ok: true } };
+      },
+    });
+    await ctx.registerTool({
+      name: "boom",
+      description: "Always throws.",
+      inputSchema: { type: "object", properties: {} },
+      execute() {
+        throw new Error("kaboom");
+      },
+    });
+    await ctx.registerTool({
+      name: "slow",
+      description: "Resolves after ms, or rejects when the signal aborts.",
+      inputSchema: { type: "object", properties: { ms: { type: "number" } } },
+      execute({ ms }, context) {
+        return new Promise((resolve, reject) => {
+          const timer = setTimeout(() => resolve({ slept: ms }), ms);
+          context.signal.addEventListener("abort", () => {
+            clearTimeout(timer);
+            reject(new Error("aborted by host"));
+          });
+        });
+      },
+    });
+    await ctx.registerTool({
+      name: "my tool/with.spaces",
+      description: "Needs a sanitised MCP name.",
+      inputSchema: { properties: { n: { type: "integer" } } },
+      execute({ n }) {
+        return `n is ${n}`;
+      },
+    });
+
+    const lifecycle = new AbortController();
+    await ctx.registerTool({
+      name: "ephemeral",
+      description: "Revoked by aborting its lifecycle signal.",
+      inputSchema: { type: "object", properties: {} },
+      execute() {
+        return { alive: true };
+      },
+    }, { signal: lifecycle.signal });
+    window.revokeEphemeral = () => lifecycle.abort();
+
+    // Chrome dialect: navigator.modelContext.registerTool(tool) / unregisterTool(name).
+    await navigator.modelContext.registerTool({
+      name: "chrome_style",
+      description: "Registered without a signal; removed with unregisterTool.",
+      inputSchema: { type: "object", properties: {} },
+      execute() {
+        return { dialect: "chrome" };
+      },
+    });
+    window.unregisterChromeStyle = () => navigator.modelContext.unregisterTool("chrome_style");
+
+    window.registerLate = () =>
+      ctx.registerTool({
+        name: "late",
+        description: "Registered after load.",
+        inputSchema: { type: "object", properties: {} },
+        execute() {
+          return { late: true };
+        },
+      });
+
+    window.toolchangeCount = 0;
+    ctx.addEventListener("toolchange", () => { window.toolchangeCount += 1; });
+    return true;
+  })();
+</script>
+</body>
+</html>
