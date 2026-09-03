@@ -72,7 +72,7 @@ Navigation: when the tab navigates, the mirror resets and the new page's registr
 
 ## Living with a changing tool list
 
-WebMCP pages register and revoke tools as their state changes. Flow Control, for example, exposes one tool while the Shift is armed, nine once the agent takes the sector, and five read-only tools after the Shift completes. The adapter forwards each change immediately, so an agent should expect its tool list to move and should re-list rather than assume. A call to a revoked tool returns an `isError` result saying the tool is stale.
+WebMCP pages register and revoke tools as their state changes. Flow Control, for example, exposes a single `describe_tower` before a person arms the Shift, one tool once armed, nine once the agent takes the sector, and five read-only tools after the Shift completes. The adapter forwards each change immediately, so an agent should expect its tool list to move and should re-list rather than assume. A call to a revoked tool returns an `isError` result saying the tool is stale.
 
 ## Native mode
 

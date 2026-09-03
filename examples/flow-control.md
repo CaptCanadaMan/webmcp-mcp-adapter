@@ -4,7 +4,7 @@
 
 ## Before you start
 
-The person arms the Shift in the window by clicking "Arm configured Shift". Until they do, the page registers nothing you can act on. Call `webmcp_status` and wait until `begin_tower_shift` is in the tool list.
+Before a Shift is armed the page registers one tool, `describe_tower`. Call it: it tells you what the application is, the pending configuration, and that a person must click "Arm configured Shift" in the window. Ask them to. Arming revokes `describe_tower` and registers `begin_tower_shift`; re-list tools (or watch for the list change) rather than assuming.
 
 ## The loop
 
